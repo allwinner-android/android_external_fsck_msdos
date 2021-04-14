@@ -54,6 +54,7 @@ static const char rcsid[] =
  * this whole thing and optimize for less memory
  */
 #define FAT_COMPARE_MAX_KB 4096
+#define FAT_MAX_SECTORS 400000
 
 int
 checkfilesys(const char *fname)
@@ -100,6 +101,12 @@ checkfilesys(const char *fname)
 		goto out;
 	}
 
+    printf("the udisk capacity is %u*%u,the NumSectors is %u,the NumClusters is %u\n",boot.FATsecs,boot.BytesPerSec,boot.NumSectors,boot.NumClusters);
+    if (boot.FATsecs > FAT_MAX_SECTORS ){
+        printf("FAT32: donot check when the capacity is larger than 2T!\n");
+        ret = 0;
+        goto out;
+    }
         if (((boot.FATsecs * boot.BytesPerSec) / 1024) > FAT_COMPARE_MAX_KB)
             skip_fat_compare = 1;
 
